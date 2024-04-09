@@ -1,41 +1,58 @@
-console.log("Hola mundo");
-
-const lblOnline = document.querySelector('#lblOnline');
-const lblOfline = document.querySelector('#lblOfline');
-const txtMensaje = document.querySelector('#txtMensaje');
-const btnEnviar = document.querySelector('#btnEnviar');
-
+const lblOnline = document.querySelector("#lblOnline");
+const lblOffline = document.querySelector("#lblOffline");
+const txtMensaje = document.querySelector("#txtMensaje");
+const btnEnviar = document.querySelector("#btnEnviar");
+const tablaMensajes = document.querySelector("#tablaMensajes tbody");
 
 const socketClient = io();
 
 socketClient.on("connect", () => {
   console.log("Conectado 👌");
-  lblOfline.style.display = 'none';
-  lblOnline.style.display = '';
+  lblOffline.style.display = "none";
+  lblOnline.style.display = "";
 });
 
 socketClient.on("disconnect", () => {
   console.log("Desconectado 💀");
-  lblOfline.style.display = '';
-  lblOnline.style.display = 'none';
+  lblOffline.style.display = "";
+  lblOnline.style.display = "none";
 });
 
-socketClient.on('res-ser', (resp) => {
-  console.log('🟡 Servidor respondio',resp);
+socketClient.on("res-ser", (mensaje) => {
+  console.log("Mensaje recibido desde el servidor:", mensaje);
+
+  const row = tablaMensajes.insertRow(0);
+  const clienteCell = row.insertCell(0);
+  const fechaHoraCell = row.insertCell(1);
+  const descripcionCell = row.insertCell(2);
+  const accionesCell = row.insertCell(3);
+
+  clienteCell.textContent = mensaje.cliente;
+  fechaHoraCell.textContent = mensaje.fecha + " " + mensaje.hora;
+  descripcionCell.textContent = mensaje.descripcion;
+
+  const eliminarButton = document.createElement("button");
+  eliminarButton.textContent = "Eliminar";
+  eliminarButton.classList.add("btn", "btn-danger");
+  eliminarButton.addEventListener("click", () => {
+    socketClient.emit("eliminar-mensaje", mensaje.id);
+
+    row.remove();
+  });
+  accionesCell.appendChild(eliminarButton);
 });
 
-btnEnviar.addEventListener('click', () => {
+btnEnviar.addEventListener("click", () => {
   const mensaje = txtMensaje.value;
   console.log(mensaje);
 
   const payload = {
-    mensaje,
-    id: '123ABC',
+    descripcion: mensaje,
     fecha: new Date().toLocaleDateString(),
-    hora: new Date().toLocaleTimeString()
+    hora: new Date().toLocaleTimeString(),
   };
 
-  socketClient.emit('enviar-mensaje', payload, (id) => {
-    console.log('🥕 Callback desde el server', id);
+  socketClient.emit("enviar-mensaje", payload, (id) => {
+    console.log("🥕 Callback desde el server", id);
   });
 });

@@ -12,19 +12,35 @@
 
     <p>
         Server status:
-        <span id="lblOnline" class="text-sucess">🟢 Online</span>
-        <span id="lblOfline" class="text-danger">🔴 Ofline</span>
-
+        <span id="lblOnline" class="text-success">🟢 Online</span>
+        <span id="lblOffline" class="text-danger">🔴 Offline</span>
     </p>
 
     <div class="row">
         <div class="col">
-            <input id="txtMensaje" class="form-control" ="text">
+            <input id="txtMensaje" class="form-control" type="text">
         </div>
         <div class="col">
             <button id="btnEnviar" class="btn-primary">Enviar</button>
         </div>
     </div>
+
+    <hr>
+
+    <h2 class="mt-4">Mensajes</h2>
+    <table id="tablaMensajes" class="table">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Fecha y Hora</th>
+                <th>Descripción del Mensaje</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
     <script src="./socket.io/socket.io.js"></script>
     <script src="./js/socket-client.js"></script>
 </body>

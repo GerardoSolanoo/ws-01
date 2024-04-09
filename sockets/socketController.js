@@ -1,19 +1,30 @@
 const socketController = (socket) => {
-    console.log("Cliente conectado", socket.handshake.headers['sec-ch-ua']);
+  console.log("Cliente conectado", socket.handshake.headers["sec-ch-ua"]);
 
-    socket.on("disconnect", () => {
-        console.log("Cliente desconectado", socket.id);
-    });
+  socket.on("disconnect", () => {
+    console.log("Cliente desconectado", socket.id);
+  });
 
-    socket.on("mensaje-to-server", (payload, callback) => {
-        console.log('💻 -> ', payload);
-        const id= 1234;
-        callback(id)
+  socket.on("enviar-mensaje", (payload, callback) => {
+    console.log("💻 -> ", payload);
+    const id = 1234;
+    callback(id);
 
-        socket.broadcast.emit('res-ser', payload);
-    });
-}
+    const mensaje = {
+        cliente: socket.id,
+        fecha: payload.fecha,
+        hora: payload.hora,
+        descripcion: payload.descripcion,
+    };
 
-module.exports={
-    socketController
-}
+    socket.emit("res-ser", mensaje);
+  });
+
+  socket.on("eliminar-mensaje", (mensajeId) => {
+    socket.broadcast.emit("mensaje-eliminado", mensajeId);
+  });
+};
+
+module.exports = {
+  socketController,
+};
